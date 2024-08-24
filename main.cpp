@@ -1,23 +1,35 @@
-#include "base/CurrentThread.h"
 #include "net/EventLoop.h"
-#include "base/Thread.h"
+#include <sys/timerfd.h>
+#include "net/Channel.h"
+#include <string.h>
+#include <cstdio>
+#include <unistd.h>
 
-void threadFunc()
+tiny_muduo::net::EventLoop* g_loop;
+
+void timeout()
 {
-    printf("threadFunc(): pid %d , tid= %d\n" , getpid() , tiny_muduo::CurrentThread::tid());
-
-    tiny_muduo::net::EventLoop loop;
-    loop.loop();
+    printf("Timeout\n");
+    g_loop->quit();
 }
 
 int main()
 {
-    printf("main(): pid %d , tid= %d\n" , getpid() , tiny_muduo::CurrentThread::tid());
 
     tiny_muduo::net::EventLoop loop;
-    tiny_muduo::Thread thread(threadFunc);
-    thread.start();
+    g_loop = &loop;
+
+    int timerfd = ::timerfd_create(CLOCK_MONOTONIC  , TFD_NONBLOCK | TFD_CLOEXEC );
+    tiny_muduo::net::Channel channel(&loop , timerfd);
+    channel.setReadCallBack(timeout);
+    channel.enableReading();
+
+    struct itimerspec howlong;
+    bzero(&howlong , sizeof(howlong));
+    howlong.it_value.tv_sec = 5;
+    ::timerfd_settime(timerfd , 0 , & howlong , NULL);
 
     loop.loop();
-    pthread_exit(NULL);
+
+    ::close(timerfd);
 }

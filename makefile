@@ -4,7 +4,10 @@ LD = g++
 LIB = -I base/ -I net/
 CFLAGS =  -Wall   -c -g 
 OBJS = $(BUILD_DIR)/main.o  $(BUILD_DIR)/CountDownLatch.o $(BUILD_DIR)/Thread.o	\
-	   $(BUILD_DIR)/CurrentThread.o $(BUILD_DIR)/EventLoop.o
+	   $(BUILD_DIR)/CurrentThread.o $(BUILD_DIR)/Timestamp.o $(BUILD_DIR)/EventLoop.o 	\
+	   $(BUILD_DIR)/Channel.o $(BUILD_DIR)/Poller.o
+
+	
 
 
 
@@ -24,11 +27,22 @@ $(BUILD_DIR)/Thread.o : base/Thread.cpp
 $(BUILD_DIR)/CurrentThread.o : base/CurrentThread.cpp 
 	$(CC) $(CFLAGS)  $< -o $@
 
+$(BUILD_DIR)/Timestamp.o : base/Timestamp.cpp 
+	$(CC) $(CFLAGS)  $< -o $@
+
 
 ### net
 
 $(BUILD_DIR)/EventLoop.o : net/EventLoop.cpp    
 	$(CC) $(CFLAGS)  $< -o $@
+
+$(BUILD_DIR)/Channel.o : net/Channel.cpp
+	$(CC) $(CFLAGS)  $< -o $@
+
+$(BUILD_DIR)/Poller.o : net/Poller.cpp
+	$(CC) $(CFLAGS)  $< -o $@
+
+
 
 
 ############ 	lind all object file ##############

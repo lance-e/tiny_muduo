@@ -2,16 +2,22 @@
 #include <assert.h>
 #include "../base/CurrentThread.h"
 #include "cstdio"
+#include "Poller.h"
+#include "Channel.h"
 
 using namespace tiny_muduo;
 using namespace tiny_muduo::net;
 
 __thread EventLoop* t_loopInThisThread = 0;
 
+const int kPollTimeMs = 10000;
 
 EventLoop::EventLoop()
     :looping_(false),
-    threadId_(tiny_muduo::CurrentThread::tid())
+    quit_(false),
+    threadId_(tiny_muduo::CurrentThread::tid()),
+    poller_(new Poller(this)),
+    activeChannels_(0)
 {
     printf("in thread : %d\n" , threadId_);
     if (t_loopInThisThread ){
@@ -35,11 +41,23 @@ EventLoop* EventLoop::getEventLoopOfCurrentThread()
 void EventLoop::loop()
 {
     assert(!looping_);
-    assertInLoop();
+    assertInLoopThread();
 
     looping_ = true;
+    quit_ = false;
 
     // handling 
+    while(!quit_)
+    {
+        activeChannels_.clear();
+        poller_->poll(kPollTimeMs , &activeChannels_);
+        for (ChannelList::iterator it = activeChannels_.begin() ; it != activeChannels_.end() ;++it)
+        {
+            (*it)->handleEvent();
+        }
+    }
+
+    printf("EventLoop stop looping\n");
 
     looping_ = false;
 }
@@ -47,4 +65,17 @@ void EventLoop::loop()
 void EventLoop::abortNotInLoopThread()
 {
     printf("EventLoop::abortNotInLoopThread : this EventLoop was create in thread:%d , current is %d \n  " , threadId_ , tiny_muduo::CurrentThread::tid());
+}
+
+void EventLoop::quit()
+{
+    quit_ = true;
+}
+
+
+void EventLoop::updateChannel(Channel* channel)
+{
+    assert(channel->ownerLoop() == this);
+    assertInLoopThread();
+    poller_->updateChannel(channel);
 }
