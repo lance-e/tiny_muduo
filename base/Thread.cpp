@@ -130,7 +130,7 @@ void Thread::start()
     started_ = false;
     delete data; // or no delete?
     printf("Failed in pthread_create");
-    return;
+    abort();
   }
   else
   {

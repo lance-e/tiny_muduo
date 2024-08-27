@@ -3,9 +3,12 @@
 using namespace tiny_muduo;
 
 CountDownLatch::CountDownLatch(int count)
-    :count_(count)
+    :condition_(),
+    count_(count)
 {
 }
+
+
 
 void CountDownLatch::wait()
 {

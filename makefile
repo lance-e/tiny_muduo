@@ -5,7 +5,10 @@ LIB = -I base/ -I net/
 CFLAGS =  -Wall   -c -g 
 OBJS = $(BUILD_DIR)/main.o  $(BUILD_DIR)/CountDownLatch.o $(BUILD_DIR)/Thread.o	\
 	   $(BUILD_DIR)/CurrentThread.o $(BUILD_DIR)/Timestamp.o $(BUILD_DIR)/EventLoop.o 	\
-	   $(BUILD_DIR)/Channel.o $(BUILD_DIR)/Poller.o
+	   $(BUILD_DIR)/Channel.o $(BUILD_DIR)/Poller.o $(BUILD_DIR)/EventLoopThread.o	\
+	   $(BUILD_DIR)/Timer.o $(BUILD_DIR)/TimerQueue.o $(BUILD_DIR)/InetAddress.o	\
+	   $(BUILD_DIR)/SocketsOps.o $(BUILD_DIR)/Socket.o
+	   
 
 	
 
@@ -40,6 +43,24 @@ $(BUILD_DIR)/Channel.o : net/Channel.cpp
 	$(CC) $(CFLAGS)  $< -o $@
 
 $(BUILD_DIR)/Poller.o : net/Poller.cpp
+	$(CC) $(CFLAGS)  $< -o $@
+
+$(BUILD_DIR)/EventLoopThread.o : net/EventLoopThread.cpp
+	$(CC) $(CFLAGS)  $< -o $@
+
+$(BUILD_DIR)/Timer.o : net/Timer.cpp
+	$(CC) $(CFLAGS)  $< -o $@
+
+$(BUILD_DIR)/TimerQueue.o : net/TimerQueue.cpp
+	$(CC) $(CFLAGS)  $< -o $@
+
+$(BUILD_DIR)/InetAddress.o : net/InetAddress.cpp
+	$(CC) $(CFLAGS)  $< -o $@
+
+$(BUILD_DIR)/SocketsOps.o : net/SocketsOps.cpp
+	$(CC) $(CFLAGS)  $< -o $@
+
+$(BUILD_DIR)/Socket.o : net/Socket.cpp
 	$(CC) $(CFLAGS)  $< -o $@
 
 

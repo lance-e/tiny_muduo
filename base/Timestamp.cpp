@@ -1,7 +1,16 @@
 #include "Timestamp.h"
+#include <string>
 #include <sys/time.h>
+#include <inttypes.h>
 
 using namespace tiny_muduo;
+
+std::string Timestamp::toString() const
+{
+    char buf[32] = {0};
+    snprintf(buf , sizeof(buf) , "%" PRId64 ".%06" PRId64 "", microSecondsSinceEpoch_ / kMicroSecondsPerSecond , microSecondsSinceEpoch_ % kMicroSecondsPerSecond);
+    return buf;
+}
 
 Timestamp Timestamp::now()
 {

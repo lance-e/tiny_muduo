@@ -34,15 +34,16 @@ public:
     bool isNoneEvent() const {return events_ == kNnoneEvent;}
 
     void enableReading() { events_ |= kReadEvent ; update();}
-    //void enableWriting() { events_ |= kWriteEvent; update();}
-    //void disableWritingk() { events_ &= ~kReadEvent ; update();}
-    //void disableAll() { events_ = kNnoneEvent; update();}
+    void enableWriting() { events_ |= kWriteEvent; update();}
+    void disableWritingk() { events_ &= ~kReadEvent ; update();}
+    void disableAll() { events_ = kNnoneEvent; update();}
 
     //for poller
     int index() { return index_;}
     void set_index(int idx) {index_ = idx;}
 
     EventLoop* ownerLoop() {return loop_;}
+    //remove();
 
 private:
     void update();
