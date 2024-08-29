@@ -104,6 +104,13 @@ string InetAddress::toIp() const
   return buf;
 }
 
+string InetAddress::toHostPort() const 
+{
+    char buf[32];
+    sockets::toHostPort(buf , sizeof buf , addr_);
+    return buf;
+}
+
 uint32_t InetAddress::ipv4NetEndian() const
 {
   assert(family() == AF_INET);

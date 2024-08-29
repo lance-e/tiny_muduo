@@ -1,31 +1,44 @@
-#include "base/CurrentThread.h"
+#include "net/Acceptor.h"
+#include "net/Callbacks.h"
 #include "net/EventLoop.h"
 #include "net/EventLoopThread.h"
+#include "net/InetAddress.h"
 #include <sys/timerfd.h>
 #include "net/Channel.h"
 #include <cstdio>
 #include <unistd.h>
+#include "net/TcpConnection.h"
+#include "net/TcpServer.h"
 
-void runInThread()
+void onConnection(const tiny_muduo::net::TcpConnectionPtr& conn)
 {
-    printf("runInThread():pid :%d , tid = %d\n" ,getpid() , tiny_muduo::CurrentThread::tid());
+    if (conn->connected())
+    {
+        printf("onConnection() : new connection [%s] from %s\n" , conn->name().c_str() , conn->peerAddress().toHostPort().c_str());
+    }
+    else 
+    {
+        printf("onConnection(): connection [%s] is down\n" , conn->name().c_str());
+    }
+}
+
+void onMessage(const tiny_muduo::net::TcpConnectionPtr& conn , const char* data , ssize_t len)
+{
+    printf("onMessage(): receive %zd bytes from connection [%s]\n" , len , conn->name().c_str());
 }
 
 int main()
 {
-    printf("main(): pid : %d , tid = %d\n" , getpid() , tiny_muduo::CurrentThread::tid());
+    printf("main() : pid %d , \n"  , getpid());
+    tiny_muduo::net::InetAddress listenAddr(9981);
 
-    tiny_muduo::net::EventLoopThread loopThread;
-    tiny_muduo::net::EventLoop* loop = loopThread.startLoop();
+    tiny_muduo::net::EventLoop loop;
+    tiny_muduo::net::TcpServer server(&loop , listenAddr);
+    server.setConnectionCallback(onConnection);
+    server.setMessageCallback(onMessage);
 
-    printf("runInLoop\n");
-    loop->runInLoop(runInThread);
-    sleep(1);
+    server.start();
 
-    printf("runAfter\n");
-    loop->runAfter(2 , runInThread);
-
-
-    printf("exit main()\n");
+    loop.loop();
 
 }

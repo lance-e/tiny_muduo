@@ -23,6 +23,11 @@ void toIpPort(char* buf, size_t size,
 void toIp(char* buf, size_t size,
           const struct sockaddr* addr);
 
+void toHostPort(char* buf, size_t size,const struct sockaddr_in& addr);
+
+struct sockaddr_in6 getLocalAddr(int sockfd);
+
+
 }
 }
 }

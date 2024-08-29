@@ -36,7 +36,7 @@ EventLoop::EventLoop()
     wakeupChannel_(new Channel(this , wakeupFd_)),
     activeChannels_(0)
 {
-    printf("in thread : %d\n" , threadId_);
+    printf("EventLoop in thread : %d\n" , threadId_);
     if (t_loopInThisThread ){
         printf("another event loop exist in this thread %d\n" , threadId_);
         abort();
@@ -174,15 +174,22 @@ void EventLoop::updateChannel(Channel* channel)
     poller_->updateChannel(channel);
 }
 
+void EventLoop::removeChannel(Channel* channel)
+{
+    assert(channel->ownerLoop() == this);
+    assertInLoopThread();
+    poller_->removeChannel(channel);
+}
+
 
 void EventLoop::doPendingFunctors()
 {
     std::vector<Functor> functors;
     callingPendingFunctors_ = true;
     {
-        pthread_mutex_lock(&mutex_);
+        //pthread_mutex_lock(&mutex_);
         functors.swap(PendingFunctors_);        //key : swap into local value 
-        pthread_mutex_unlock(&mutex_);
+        //pthread_mutex_unlock(&mutex_);
     }
 
     for (size_t i  = 0  ; i < functors.size() ; i ++)

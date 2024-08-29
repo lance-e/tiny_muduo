@@ -7,7 +7,8 @@ OBJS = $(BUILD_DIR)/main.o  $(BUILD_DIR)/CountDownLatch.o $(BUILD_DIR)/Thread.o	
 	   $(BUILD_DIR)/CurrentThread.o $(BUILD_DIR)/Timestamp.o $(BUILD_DIR)/EventLoop.o 	\
 	   $(BUILD_DIR)/Channel.o $(BUILD_DIR)/Poller.o $(BUILD_DIR)/EventLoopThread.o	\
 	   $(BUILD_DIR)/Timer.o $(BUILD_DIR)/TimerQueue.o $(BUILD_DIR)/InetAddress.o	\
-	   $(BUILD_DIR)/SocketsOps.o $(BUILD_DIR)/Socket.o
+	   $(BUILD_DIR)/SocketsOps.o $(BUILD_DIR)/Socket.o $(BUILD_DIR)/Acceptor.o	\
+	   $(BUILD_DIR)/TcpServer.o $(BUILD_DIR)/TcpConnection.o
 	   
 
 	
@@ -62,6 +63,17 @@ $(BUILD_DIR)/SocketsOps.o : net/SocketsOps.cpp
 
 $(BUILD_DIR)/Socket.o : net/Socket.cpp
 	$(CC) $(CFLAGS)  $< -o $@
+
+$(BUILD_DIR)/Acceptor.o : net/Acceptor.cpp
+	$(CC) $(CFLAGS)  $< -o $@
+
+$(BUILD_DIR)/TcpServer.o : net/TcpServer.cpp
+	$(CC) $(CFLAGS)  $< -o $@
+
+$(BUILD_DIR)/TcpConnection.o : net/TcpConnection.cpp
+	$(CC) $(CFLAGS)  $< -o $@
+
+
 
 
 

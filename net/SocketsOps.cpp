@@ -109,3 +109,24 @@ void sockets::toIp(char* buf, size_t size,
     ::inet_ntop(AF_INET6, &addr6->sin6_addr, buf, static_cast<socklen_t>(size));
   }
 }
+
+
+void sockets::toHostPort(char* buf, size_t size,const struct sockaddr_in& addr)
+{
+  char host[INET_ADDRSTRLEN] = "INVALID";
+  ::inet_ntop(AF_INET, &addr.sin_addr, host, sizeof host);
+  uint16_t port = be16toh(addr.sin_port);
+  snprintf(buf, size, "%s:%u", host, port);
+}
+
+struct sockaddr_in6 sockets::getLocalAddr(int sockfd)
+{
+  struct sockaddr_in6 localaddr;
+  memset(&localaddr, 0 , sizeof localaddr);
+  socklen_t addrlen = static_cast<socklen_t>(sizeof localaddr);
+  if (::getsockname(sockfd, sockaddr_cast(&localaddr), &addrlen) < 0)
+  {
+    printf("sockets::getLocalAddr error \n");
+  }
+  return localaddr;
+}

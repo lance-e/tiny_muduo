@@ -19,6 +19,7 @@ public:
     typedef std::function<void()> EventCallback;
 
     Channel(EventLoop* loop , int fd);
+    ~Channel();
 
     void handleEvent();
     void setReadCallBack(const EventCallback& cb)
@@ -27,7 +28,10 @@ public:
     { writeCallBack_ = cb;}
     void setErrorCallBack(const EventCallback& cb)
     { errorCallBack_ = cb;}
+    void setCloseCallBack(const EventCallback& cb)
+    { closeCallBack_ = cb;}
     
+
     int fd() const {return fd_;}
     int events() const { return events_;}
     void set_revents(int rev) {revents_  = rev;}
@@ -43,7 +47,7 @@ public:
     void set_index(int idx) {index_ = idx;}
 
     EventLoop* ownerLoop() {return loop_;}
-    //remove();
+    void remove();
 
 private:
     void update();
@@ -59,10 +63,12 @@ private:
     int revents_;
     int index_;     //used in poller
 
+    bool eventHandling_;
 
     EventCallback readCallBack_;
     EventCallback writeCallBack_;
     EventCallback errorCallBack_;
+    EventCallback closeCallBack_;
     
 };
 

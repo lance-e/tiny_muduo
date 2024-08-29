@@ -37,6 +37,7 @@ class InetAddress : public copyable
   sa_family_t family() const { return addr_.sin_family; }
   string toIp() const;
   string toIpPort() const;
+  string toHostPort() const;
   uint16_t port() const;
 
   // default copy/assignment are Okay
